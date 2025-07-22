@@ -1,23 +1,20 @@
-# Use the official Node.js 16 image as the base image
-FROM node:16-alpine
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy package.json and package-lock.json (or yarn.lock) to the container
-COPY package*.json ./
-
-# Install project dependencies
+# Stage 1: Build React frontend
+FROM node:16-alpine AS frontend-builder
+WORKDIR /client
+COPY client/package.json client/package-lock.json ./
 RUN npm install
-
-# Copy the rest of the application code to the container
-COPY . .
-
-# Build the React app
+COPY client/ ./
 RUN npm run build
 
-# Expose the port that the app will run on (usually 3000 by default)
-EXPOSE 3000
+# Stage 2: Build backend + serve frontend
+FROM node:16-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install --production
+COPY server.js ./
+COPY routes/ models/ controllers/ config/ ./
+# Copy built frontend into backend's public folder (assuming Express serves it)
+COPY --from=frontend-builder /client/build ./client/build
 
-# Start the React app when the container starts
-CMD [ "npm", "start" ]
+EXPOSE 8080
+CMD ["node", "server.js"]
