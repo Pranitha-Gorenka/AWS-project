@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bloodbank
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bloodbank
+  template:
+    metadata:
+      labels:
+        app: bloodbank
+    spec:
+      containers:
+      - name: bloodbank
+        image: manne335/bloodbank-php:v1      # Your Docker image name & tag from pipeline
+        ports:
+        - containerPort: 80                 # Assuming your app runs on port 80
+        # If you need env variables or volume mounts, add here
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bloodbank-service
+spec:
+  selector:
+    app: bloodbank
+  ports:
+  - protocol: TCP
+    port: 80                            # Expose on port 80 externally
+    targetPort: 80                     # Target port inside the container
+  type: LoadBalancer
