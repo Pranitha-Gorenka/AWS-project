@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bloodbank-service
+spec:
+  type: LoadBalancer  # Choose *either* LoadBalancer or NodePort
+  selector:
+    app: bloodbank     # Match your Deployment label
+  ports:
+    - protocol: TCP
+      port: 80          # External port
+      targetPort: 80    # Port inside the container
