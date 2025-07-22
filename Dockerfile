@@ -1,20 +1,15 @@
-# Stage 1: Build React frontend
-FROM node:16-alpine AS frontend-builder
-WORKDIR /client
-COPY client/package.json client/package-lock.json ./
-RUN npm install
-COPY client/ ./
-RUN npm run build
+# Use an Apache image with PHP preinstalled
+FROM php:7.4-apache
 
-# Stage 2: Build backend + serve frontend
-FROM node:16-alpine
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --production
-COPY server.js ./
-COPY routes/ models/ controllers/ config/ ./
-# Copy built frontend into backend's public folder (assuming Express serves it)
-COPY --from=frontend-builder /client/build ./client/build
+# Copy all project files into Apache's web root
+COPY . /var/www/html/
 
-EXPOSE 8080
-CMD ["node", "server.js"]
+# Enable Apache mod_rewrite if needed
+RUN a2enmod rewrite
+
+# Set correct permissions (optional, depending on needs)
+RUN chown -R www-data:www-data /var/www/html
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]
