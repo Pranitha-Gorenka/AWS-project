@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bloodbank
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Pranitha-Gorenka/AWS-project.git'
+    targetRevision: HEAD
+    path: '.'   # <-- Make sure this matches your folder
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: bloodbank
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
