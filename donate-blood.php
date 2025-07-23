@@ -29,7 +29,7 @@ class script{
 
         public function __construct(){
 
-                $server = "mysqldb2022.c4a31adjeatg.us-west-2.rds.amazonaws.com";
+                $server = "mysqldb.c2pyquskghrf.us-east-1.rds.amazonaws.com";
                 $user = "admin";
                 $pass = "admin123";
                 $db = "customers";
